@@ -42,7 +42,7 @@ docker build -t test/runtimetest  .
 echo "Test Step 3: Validate the Docker image with the OCI image validator."
 docker save -o runtimetest-archive.tar test/runtimetest
 oci-runtime-tool validate runtimetest-archive.tar
-../work/src/github.com/opencontainers/image-tools/oci-image-validate runtimetest-archive.tar
+$HOME/work/src/github.com/opencontainers/image-tools/oci-image-validate runtimetest-archive.tar
 
 # 
 # Run the OCI test executable container in Docker. 
