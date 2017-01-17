@@ -66,27 +66,41 @@ The general process of running the OCI conformance test environment is:
 * Using `runc` to create and run the container from the bundle. 
 
 There is a shell script, `test_runtime.sh`, that is part of the OCI runtime tools that does this work and a little more.
+There was a problem in the script towards the end where it attempts to "start" the container, rather than "run" it. 
+It is fixed by changing the line from: 
 
+`TESTCMD="${RUNTIME} start $(uuidgen)"`
+
+to:
+
+`TESTCMD="${RUNTIME} run $(uuidgen)"`
+
+So a simple run will look something like the following:
 ```
-$ sudo ./test_runtime.sh -r $(which runc) -l debug
+$ cd work/src/github.com/opencontainers/runtime-tools/
+$ sudo ./test_runtime.sh -r $(which runc) 
+sudo ./test_runtime.sh -r $(which runc)
 -----------------------------------------------------------------------------------
 VALIDATING RUNTIME: /usr/local/sbin/runc
 -----------------------------------------------------------------------------------
-time="2017-01-13T22:58:46Z" level=debug msg="validating root filesystem"
-time="2017-01-13T22:58:46Z" level=debug msg="validating hostname"
-time="2017-01-13T22:58:46Z" level=debug msg="validating mounts exist"
-time="2017-01-13T22:58:46Z" level=debug msg="validating capabilities"
-time="2017-01-13T22:58:46Z" level=debug msg="validating linux default filesystem"
-time="2017-01-13T22:58:46Z" level=debug msg="validating linux default devices"
-time="2017-01-13T22:58:46Z" level=debug msg="validating linux devices"
-time="2017-01-13T22:58:46Z" level=debug msg="validating container process"
-time="2017-01-13T22:58:46Z" level=debug msg="validating maskedPaths"
-time="2017-01-13T22:58:46Z" level=debug msg="validating oomScoreAdj"
-time="2017-01-13T22:58:46Z" level=debug msg="validating readonlyPaths"
-time="2017-01-13T22:58:46Z" level=debug msg="validating rlimits"
-time="2017-01-13T22:58:46Z" level=debug msg="validating sysctls"
-time="2017-01-13T22:58:46Z" level=debug msg="validating uidMappings"
-time="2017-01-13T22:58:46Z" level=debug msg="validating gidMappings"
+TAP version 13
+ok 1 - root filesystem
+ok 2 - hostname
+ok 3 - mounts
+ok 4 - capabilities
+ok 5 - default symlinks
+ok 6 - default file system
+ok 7 - default devices
+ok 8 - linux devices
+ok 9 - linux process
+ok 10 - masked paths
+ok 11 - oom score adj
+ok 12 - read only paths
+ok 13 - rlimits
+ok 14 - sysctls
+ok 15 - uid mappings
+ok 16 - gid mappings
+1..16
 Runtime /usr/local/sbin/runc passed validation
 ```
 
