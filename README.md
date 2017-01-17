@@ -60,11 +60,10 @@ This process is rightly described on the [OCI Runtime Tools site](https://github
 The general process of running the OCI conformance test environment is:
 * Build the conformance test binary, `runtimetest`, and `oci-runtime-tool`. 
 * Build a container bundle in a directory that will be the "root" of the bundle. This involves:
-
-..* Unpacking the tar archive of the rootfs.
-..* Copying the `runtimetest` binary into the root. 
-..* Using `oci-runtime-test` to generate a `config.json` file at the root.
-..* This 
+** Unpacking the tar archive of the rootfs.
+** Copying the `runtimetest` binary into the root. 
+** Using `oci-runtime-test` to generate a `config.json` file at the root.
+** This 
 
 
 # Running the OCI Runtime Tool Conformance Suite with Docker
