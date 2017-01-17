@@ -36,7 +36,6 @@ but this final stage of stamping the vagrant owner/group on the OCI tree is prob
 
 ## Starting Your Vagrant Machine
 If you've not worked with Vagrant before now, install it on your machine. Instructions can be found on the [Vagrant site](https://www.vagrantup.com/). Once vagrant is installed, `git clone` this project into a working directory. 
-
 ```
 $ git clone https://github.com/stephenrwalli/OCI_testing.git
 $ cd OCI_testing/<plaform>
@@ -46,10 +45,9 @@ Vagrantfile           bootstrap-<platform>.sh
 
 It doesn't matter what platform you choose. Pick the one with which you're most familiar. 
 From this directory, you can now issue commands to bring your vagrant machine up, and connect to it. 
-
 ```
 $ vagrant up
-...
+... [lots of output as the machine is built] ... 
 $ vagrant ssh
 ```
 
@@ -79,7 +77,6 @@ So once you start your vagrant machine and login via ssh, a simple run will look
 ```
 $ cd work/src/github.com/opencontainers/runtime-tools/
 $ sudo ./test_runtime.sh -r $(which runc) 
-sudo ./test_runtime.sh -r $(which runc)
 -----------------------------------------------------------------------------------
 VALIDATING RUNTIME: /usr/local/sbin/runc
 -----------------------------------------------------------------------------------
@@ -104,22 +101,27 @@ ok 16 - gid mappings
 Runtime /usr/local/sbin/runc passed validation
 ```
 
-# Running the OCI Runtime Conformance Suite with Docker
+# Running the OCI Runtime Conformance Suite with Other Runtimes
 Running the OCI conformance suite in the context of `runc` is certainly interesting, 
 and obviously the reference implementation of the OCI runtime specification should pass a conformance test suite for the specification. 
 It becomes more interesting to determine how other container run-times and implementations of the OCI runtime specification behave, 
 and how the OCI conformance suite adapts to other environments. 
 
-Essentially, one needs to take the same approach of building a container bundle around the conformance test environment, 
-then invoking the new container runtime.  For Docker, that means:
-* Create a working directory 
- - copy into it the OCI runtime-tools test binary,
- - the root filesystem tar archive for the OCI container bundle, 
+Essentially, 
+one needs to take the same approach of building a container bundle around the conformance test environment,
+manipulating it into the container runtime expected packaging, 
+then invoking the container runtime.  
+
+## Running the OCI Runtime Conformance Suite with Docker
+Running the OCI runtime conformance suite with Docker means:
+* Create a working directory, then using the OCI runtime tools,  
+ - copy into it the OCI runtime-tools test binary, `runtimetest`,
+ - the root filesystem tar archive for the OCI container bundle, `rootfs.tar.gz`, 
  - generate an appropriate config.json for the bundle with `oci-runtime-tool`.
-* Create a base Docker image from the root filesystem tar archive (with `import`), and tag the image. 
+* Create a base Docker image from the root filesystem tar archive (with `docker import`), and tag the image. 
 * Create a simple `Dockerfile` to pull the parts together into a Docker image. 
 * Run the Docker image. 
-* Verify the image looks appropriate with `oci-runtime-tool` and `oci-image-validator` (based on the archive created with `save`). 
+* Verify the image looks appropriate with `oci-runtime-tool` and `oci-image-validator` (based on the archive created with `docker save`). 
 
 The Dockerfile looks like: 
 ```
@@ -132,6 +134,7 @@ ENTRYPOINT [ "/runtimetest", "--log-level=debug" ]
 ```
 
 This process has been encapsulated into a `test_docker.sh` shell script. 
+All the steps described above are captured in the script. 
 ```
 $ cd $HOME
 $ git clone https://github.com/stephenrwalli/OCI_testing.git
@@ -139,7 +142,35 @@ $ git clone https://github.com/stephenrwalli/OCI_testing.git
 $ cd OCI_testing/test_scripts/
 $ ./test_docker.sh 
 ...
+$
 ```
+
+After a running the script, there's a directory that contains the Docker container build out, 
+as well as the saved and validated image. 
+Dumping the archive of the validated image shows the layers that were built up as `docker build` worked through the `Dockerfile`. 
+```
+$ ls test_docker
+config.json  Dockerfile  rootfs.tar.gz  runtimetest  runtimetest-archive.tar
+$ tar tvf test_docker/runtimetest-archive.tar
+-rw-r--r-- 0/0            2464 2017-01-17 23:30 689a40fc9e951eb544c3e1f690a33a417f8b7f7066d3b966eada0d8014003df8.json
+drwxr-xr-x 0/0               0 2017-01-17 23:30 72956ba9b7a06654b3fc517989a78ee5f6be8cd52e7918ee9b1cd144cb94b769/
+-rw-r--r-- 0/0               3 2017-01-17 23:30 72956ba9b7a06654b3fc517989a78ee5f6be8cd52e7918ee9b1cd144cb94b769/VERSION
+-rw-r--r-- 0/0             388 2017-01-17 23:30 72956ba9b7a06654b3fc517989a78ee5f6be8cd52e7918ee9b1cd144cb94b769/json
+-rw-r--r-- 0/0         2140160 2017-01-17 23:30 72956ba9b7a06654b3fc517989a78ee5f6be8cd52e7918ee9b1cd144cb94b769/layer.tar
+drwxr-xr-x 0/0               0 2017-01-17 23:30 928238846208049056c8256379fb04a0858644e4bcd7a548e57d3ac1d1d95e04/
+-rw-r--r-- 0/0               3 2017-01-17 23:30 928238846208049056c8256379fb04a0858644e4bcd7a548e57d3ac1d1d95e04/VERSION
+-rw-r--r-- 0/0            1379 2017-01-17 23:30 928238846208049056c8256379fb04a0858644e4bcd7a548e57d3ac1d1d95e04/json
+-rw-r--r-- 0/0           26624 2017-01-17 23:30 928238846208049056c8256379fb04a0858644e4bcd7a548e57d3ac1d1d95e04/layer.tar
+drwxr-xr-x 0/0               0 2017-01-17 23:30 f5350bc7471f707cce96059017355178db741ea0d3cf8ad0a7b9185ea28d8027/
+-rw-r--r-- 0/0               3 2017-01-17 23:30 f5350bc7471f707cce96059017355178db741ea0d3cf8ad0a7b9185ea28d8027/VERSION
+-rw-r--r-- 0/0             464 2017-01-17 23:30 f5350bc7471f707cce96059017355178db741ea0d3cf8ad0a7b9185ea28d8027/json
+-rw-r--r-- 0/0         4803072 2017-01-17 23:30 f5350bc7471f707cce96059017355178db741ea0d3cf8ad0a7b9185ea28d8027/layer.tar
+-rw-r--r-- 0/0             366 1970-01-01 00:00 manifest.json
+-rw-r--r-- 0/0              99 1970-01-01 00:00 repositories
+[vagrant@localhost test_scripts]$
+```
+
+As the vagrant machine build out included `jq`, it is easy to inspect the various json files. 
 
 
 
