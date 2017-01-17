@@ -58,7 +58,7 @@ You are now logged into a home directory on a known configured machine ready to 
 # Running the OCI Runtime Conformance Suite with runc
 This process is rightly described on the [OCI Runtime Tools site](https://github.com/opencontainers/runtime-tools). 
 The general process of running the OCI conformance test environment is:
-* Build the conformance test binary, `runtimetest`, and `oci-runtime-tool`. 
+* Build `runtimetest` (the conformance test binary), and `oci-runtime-tool`. 
 * Build a container bundle in a directory that will be the "root" of the bundle. This involves:
  - Unpacking the tar archive of the rootfs.
  - Copying the `runtimetest` binary into the root. 
@@ -66,7 +66,7 @@ The general process of running the OCI conformance test environment is:
 * Using `runc` to create and run the container from the bundle. 
 
 There is a shell script, `test_runtime.sh`, that is part of the OCI runtime tools that does this work and a little more.
-There was a problem in the script towards the end where it attempts to "start" the container, rather than "run" it. 
+There is/was a problem in the script towards the end where it attempts to "start" the container, rather than "run" it. 
 It is fixed by changing the line from: 
 
 `TESTCMD="${RUNTIME} start $(uuidgen)"`
@@ -75,7 +75,7 @@ to:
 
 `TESTCMD="${RUNTIME} run $(uuidgen)"`
 
-So a simple run will look something like the following:
+So once you start your vagrant machine and login via ssh, a simple run will look something like the following:
 ```
 $ cd work/src/github.com/opencontainers/runtime-tools/
 $ sudo ./test_runtime.sh -r $(which runc) 
@@ -105,5 +105,42 @@ Runtime /usr/local/sbin/runc passed validation
 ```
 
 # Running the OCI Runtime Conformance Suite with Docker
+Running the OCI conformance suite in the context of `runc` is certainly interesting, 
+and obviously the reference implementation of the OCI runtime specification should pass a conformance test suite for the specification. 
+It becomes more interesting to determine how other container run-times and implementations of the OCI runtime specification behave, 
+and how the OCI conformance suite adapts to other environments. 
+
+Essentially, one needs to take the same approach of building a container bundle around the conformance test environment, 
+then invoking the new container runtime.  For Docker, that means:
+* Create a working directory 
+ - copy into it the OCI runtime-tools test binary,
+ - the root filesystem tar archive for the OCI container bundle, 
+ - generate an appropriate config.json for the bundle with `oci-runtime-tool`.
+* Create a base Docker image from the root filesystem tar archive (with `import`), and tag the image. 
+* Create a simple `Dockerfile` to pull the parts together into a Docker image. 
+* Run the Docker image. 
+* Verify the image looks appropriate with `oci-runtime-tool` and `oci-image-validator` (based on the archive created with `save`). 
+
+The Dockerfile looks like: 
+```
+FROM test/rootfs
+MAINTAINER Stephen R. Walli <stephen.walli@gmail.com>
+
+COPY runtimetest /
+COPY config.json /
+ENTRYPOINT [ "/runtimetest", "--log-level=debug" ]
+```
+
+This process has been encapsulated into a `test_docker.sh` shell script. 
+```
+$ cd $HOME
+$ git clone https://github.com/stephenrwalli/OCI_testing.git
+...
+$ cd OCI_testing/test_scripts/
+$ ./test_docker.sh 
+...
+```
+
+
 
 
