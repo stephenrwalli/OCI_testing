@@ -1,15 +1,15 @@
 # OCI Testing Experiments
 The following is a small collection of scripts that can be used to work with the Open Container Initiative (OCI)
-testing environment to explore the landscape. 
+conformance testing environment to explore the landscape. 
 
 The general organization: 
 
-* Build a Fedora24-based Vagrant machine, bootstrapping all of the necessary tools into the machine. 
+* Build a Vagrant machine, bootstrapping all necessary tools into the machine. The Vagrantfile and bootstrap exist for Fedora.
 * Once the machine is up and running, ssh into the machine. 
 * At this point one can run the OCI runtime conformance suite using runc. (Instructions below.)
-* Clone the OCI test script(s), and one can begin to experiment, initially running the conformance suite with Docker. 
+* git clone the OCI test script(s) to the test machine, and one can experiment (initially running the conformance suite with Docker). 
 
-# The Fedora24 Machine
+# The Vagrant Machine
 There are a number of dependencies for building the OCI tools. 
 These are all pulled into the Vagrant machine via `bootstrap.sh` as specified in the Vagrantfile. 
 
@@ -26,9 +26,15 @@ The OCI Tools are also pulled onto the machine with `bootstrap.sh`
 * runtime-tools
 * image-tools
 
-Docker is also installed via bootstrap.sh such that the conformance suite can be run on Docker. 
+Docker is  installed via `bootstrap.sh` such that the conformance suite can be run on Docker. 
 
-The last thing the `bootstrap.sh` script does is to force the vagrant user and group on the tree. 
-The bootstrap process seems to stamp root as owner and group on the OCI tools installation. 
+The last thing the `bootstrap.sh` script does is to force the `vagrant` user and group on the tree. 
+The bootstrap process seems to stamp `root` as owner and group on the OCI tools installation. 
+I imagine the bootstrap.sh file could be used on a VM on a cloud service to pull in all the dependencies, 
+but this final stage of stamping the vagrant owner/group on the OCI tree is probably less helpful in that case. 
+
+# Running the OCI Runtime Tool Conformance Suite with runc
+
+# Running the OCI Runtime Tool Conformance Suite with runc
 
 
