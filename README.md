@@ -36,12 +36,12 @@ but this final stage of stamping the vagrant owner/group on the OCI tree is prob
 ## Starting Your Vagrant Machine
 If you've not worked with Vagrant before now, install it on your machine. Instructions can be found on the [Vagrant site](https://www.vagrantup.com/). Clone this project into a working directory. 
 
-```$ git clone https://github.com/stephenrwalli/OCI_testing.git
+```
+$ git clone https://github.com/stephenrwalli/OCI_testing.git
 $ cd OCI_testing/<plaform>
 $ ls
-Vagrantfile                              bootstrap-ubuntu.sh```
-
-
+Vagrantfile                              bootstrap-ubuntu.sh
+```
 
 # Running the OCI Runtime Tool Conformance Suite with runc
 This process is rightly 
