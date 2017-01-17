@@ -68,14 +68,13 @@ sudo apt-get -y install docker-engine
 
 # sudo apt-get -y install linux-image-extra-$(uname -r) linux-image-extra-virtual
 sudo service docker start 
-sudo groupadd docker
-sudo usermod -aG docker $USER
-
+#sudo groupadd docker
+sudo usermod -aG docker ubuntu
 
 sudo apt-get -y update
 sudo apt-get -y upgrade 
 
 # Fix ownership of bootstrapped files to vagrant user
-sudo chown -R ubuntu work
-sudo chgrp -R ubuntu work
+sudo chown -R ubuntu /home/ubuntu/work
+sudo chgrp -R ubuntu /home/ubuntu/work
 
