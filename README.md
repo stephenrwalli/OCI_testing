@@ -55,7 +55,7 @@ $ vagrant ssh
 
 You are now logged into a home directory on a known configured machine ready to use the OCI conformance testing tools. 
 
-# Running the OCI Runtime Tool Conformance Suite with runc
+# Running the OCI Runtime Conformance Suite with runc
 This process is rightly described on the [OCI Runtime Tools site](https://github.com/opencontainers/runtime-tools). 
 The general process of running the OCI conformance test environment is:
 * Build the conformance test binary, `runtimetest`, and `oci-runtime-tool`. 
@@ -65,7 +65,31 @@ The general process of running the OCI conformance test environment is:
  - Using `oci-runtime-test` to generate a `config.json` file at the root.
 * Using `runc` to create and run the container from the bundle. 
 
+There is a shell script, `test_runtime.sh`, that is part of the OCI runtime tools that does this work and a little more.
 
-# Running the OCI Runtime Tool Conformance Suite with Docker
+```
+$ sudo ./test_runtime.sh -r $(which runc) -l debug
+-----------------------------------------------------------------------------------
+VALIDATING RUNTIME: /usr/local/sbin/runc
+-----------------------------------------------------------------------------------
+time="2017-01-13T22:58:46Z" level=debug msg="validating root filesystem"
+time="2017-01-13T22:58:46Z" level=debug msg="validating hostname"
+time="2017-01-13T22:58:46Z" level=debug msg="validating mounts exist"
+time="2017-01-13T22:58:46Z" level=debug msg="validating capabilities"
+time="2017-01-13T22:58:46Z" level=debug msg="validating linux default filesystem"
+time="2017-01-13T22:58:46Z" level=debug msg="validating linux default devices"
+time="2017-01-13T22:58:46Z" level=debug msg="validating linux devices"
+time="2017-01-13T22:58:46Z" level=debug msg="validating container process"
+time="2017-01-13T22:58:46Z" level=debug msg="validating maskedPaths"
+time="2017-01-13T22:58:46Z" level=debug msg="validating oomScoreAdj"
+time="2017-01-13T22:58:46Z" level=debug msg="validating readonlyPaths"
+time="2017-01-13T22:58:46Z" level=debug msg="validating rlimits"
+time="2017-01-13T22:58:46Z" level=debug msg="validating sysctls"
+time="2017-01-13T22:58:46Z" level=debug msg="validating uidMappings"
+time="2017-01-13T22:58:46Z" level=debug msg="validating gidMappings"
+Runtime /usr/local/sbin/runc passed validation
+```
+
+# Running the OCI Runtime Conformance Suite with Docker
 
 
