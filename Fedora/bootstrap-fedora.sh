@@ -79,3 +79,8 @@ sudo systemctl enable docker
 
 # Add rkt
 
+#
+# Fix ownership of bootstrapped files to vagrant user
+sudo chown -R vagrant work
+sudo chgrp -R vagrant work
+
