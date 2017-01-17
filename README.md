@@ -23,28 +23,49 @@ These are all pulled into the Vagrant machine via `bootstrap-[platform].sh` as s
 The OCI Tools are also pulled onto the machine with `bootstrap-[platform].sh`
 
 * runc
-* runtime-tools
+* runtime-tools (These tools have further github dependencies for go.) 
 * image-tools
 
-Docker is installed such that the conformance suite can be run on Docker. The plan will be to get `rkt` running next. 
+Docker is installed such that the conformance suite can be run on Docker. 
+The plan will be to get `rkt` running next. 
 
-The last thing the `bootstrap-[platform].sh` script does is to force a platform reasonable user and group on the tree. 
+The last thing the `bootstrap-[platform].sh` script does is to force a platform reasonable user and group on the OCI installed tools tree. 
 The vagrant bootstrap process seems to stamp `root` as owner and group on the OCI tools installation. 
 I imagine the `bootstrap-[platform].sh` file could be used on a VM on a cloud service to pull in all the dependencies, 
 but this final stage of stamping the vagrant owner/group on the OCI tree is probably less helpful in that case. 
 
 ## Starting Your Vagrant Machine
-If you've not worked with Vagrant before now, install it on your machine. Instructions can be found on the [Vagrant site](https://www.vagrantup.com/). Clone this project into a working directory. 
+If you've not worked with Vagrant before now, install it on your machine. Instructions can be found on the [Vagrant site](https://www.vagrantup.com/). Once vagrant is installed, `git clone` this project into a working directory. 
 
 ```
 $ git clone https://github.com/stephenrwalli/OCI_testing.git
 $ cd OCI_testing/<plaform>
 $ ls
-Vagrantfile                              bootstrap-ubuntu.sh
+Vagrantfile           bootstrap-<platform>.sh
 ```
 
+It doesn't matter what platform you choose. Pick the one with which you're most familiar. 
+From this directory, you can now issue commands to bring your vagrant machine up, and connect to it. 
+
+```
+$ vagrant up
+...
+$ vagrant ssh
+```
+
+You are now logged into a home directory on a known configured machine ready to use the OCI conformance testing tools. 
+
 # Running the OCI Runtime Tool Conformance Suite with runc
-This process is rightly 
+This process is rightly described on the [OCI Runtime Tools site](https://github.com/opencontainers/runtime-tools). 
+The general process of running the OCI conformance test environment is:
+* Build the conformance test binary, `runtimetest`, and `oci-runtime-tool`. 
+* Build a container bundle in a directory that will be the "root" of the bundle. This involves:
+..* Unpacking the tar archive of the rootfs.
+..* Copying the `runtimetest` binary into the root. 
+..* Using `oci-runtime-test` to generate a `config.json` file at the root.
+..* This 
+
+
 # Running the OCI Runtime Tool Conformance Suite with Docker
 
 
