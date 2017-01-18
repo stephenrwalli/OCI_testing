@@ -64,14 +64,16 @@ The general process of running the OCI conformance test environment is:
 * Using `runc` to create and run the container from the bundle. 
 
 There is a shell script, `test_runtime.sh`, that is part of the OCI runtime tools that does this work and a little more.
-There is/was a problem in the script towards the end where it attempts to "start" the container, rather than "run" it. 
-It is fixed by changing the line from: 
-
-`TESTCMD="${RUNTIME} start $(uuidgen)"`
-
-to:
-
-`TESTCMD="${RUNTIME} run $(uuidgen)"`
+> N.B. There is/was a problem in the script towards the end where it attempts to "start" the container, 
+> rather than "run" it. 
+> It is fixed by changing the line from: 
+>
+> `TESTCMD="${RUNTIME} start $(uuidgen)"`
+> 
+> to:
+> 
+> `TESTCMD="${RUNTIME} run $(uuidgen)"`
+> 
 
 So once you start your vagrant machine and login via ssh, a simple run will look something like the following:
 ```
