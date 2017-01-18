@@ -7,7 +7,7 @@ The general organization:
 * Build a Vagrant machine, bootstrapping all necessary tools into the machine. The Vagrantfile and bootstrap build files exist for `Fedora` and `Ubuntu` in their respective directories. 
 * Once the machine is up and running, one can ssh into the machine. 
 * At this point one can run the OCI runtime conformance suite using runc (instructions below). The bootstrap environment for the vagrant machine should have all the tools and OCI tools on the machine to enable this. 
-* git clone the OCI test script(s) )in `test_scripts`) to the test machine, and one can experiment (initially running the conformance suite with Docker). 
+* `git clone` the OCI test script(s) (in `test_scripts`) to the test machine, and one can experiment (initially running the conformance suite with Docker). 
 
 # The Vagrant Machine
 There are a number of dependencies for building the OCI tools. 
