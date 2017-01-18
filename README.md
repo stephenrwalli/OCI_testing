@@ -223,6 +223,7 @@ $ cd ~
 $ git clone https://github.com/containers/build acbuild
 $ cd acbuild
 $ ./build
+$ cd ~
 $ echo 'export ACBUILD_BIN_DIR=~/acbuild/bin' >> .profile
 $ echo 'export PATH=$PATH:$ACBUILD_BIN_DIR' >> .profile
 $ source .profile
