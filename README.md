@@ -274,6 +274,10 @@ Writing ACI to test-rkt.aci
 ```
 
 At this point we can run the rkt image. 
+> N.B. On the Fedora vagrant machine, there is a known rkt issue. 
+> `rkt` conflicts with Fedora's default SELinux policy - May be fixed in Fedora25.
+> Workaround for this is running `sudo setenforce 0`
+
 ```
 $ rkt run --insecure-options=image test-rkt.aci
 image: using image from file /home/ubuntu/rkt-v1.0.0/stage1-coreos.aci
