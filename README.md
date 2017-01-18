@@ -104,8 +104,7 @@ Runtime /usr/local/sbin/runc passed validation
 # Running the OCI Runtime Conformance Suite with Other Runtimes
 Running the OCI conformance suite in the context of `runc` is certainly interesting, 
 and obviously the reference implementation of the OCI runtime specification should pass a conformance test suite for the specification. 
-It becomes more interesting to determine how other container run-times and implementations of the OCI runtime specification behave, 
-and how the OCI conformance suite adapts to other environments. 
+It becomes more interesting to determine how the OCI conformance suite adapts to other container run-times and implementations of the OCI runtime specification.
 
 Essentially, 
 one needs to take the same approach of building a container bundle around the conformance test environment,
