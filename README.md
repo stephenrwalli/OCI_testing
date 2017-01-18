@@ -129,14 +129,45 @@ Running the OCI runtime conformance suite with Docker means:
 * Run the Docker image. 
 * Verify the image looks appropriate with `oci-runtime-tool` and `oci-image-validator` (based on the archive created with `docker save`). 
 
+The steps start by creating a workspace and copying the OCI conformance test environment into it:
+```
+$ mkdir test_docker
+$ cd test_docker
+$ cp $HOME/work/src/github.com/opencontainers/runtime-tools/runtimetest .
+$ cp $HOME/work/src/github.com/opencontainers/runtime-tools/rootfs.tar.gz .
+$ oci-runtime-tool generate --output config.json --args '/runtimetest' --args '--log-level=debug'  --rootfs-path '.'
+```
+
+Create the base image from the tar archive:
+```
+$ ID=$(docker import rootfs.tar.gz)
+$ docker tag $ID test/rootfs
+```
+
 The Dockerfile looks like: 
 ```
 FROM test/rootfs
-MAINTAINER Stephen R. Walli <stephen.walli@gmail.com>
+MAINTAINER Your Name <youremail@wherever.com>
 
 COPY runtimetest /
 COPY config.json /
 ENTRYPOINT [ "/runtimetest", "--log-level=debug" ]
+```
+Build the docker container image: 
+```
+$ docker build -t test/runtimetest  .
+```
+
+Validate the container image: 
+```
+$ docker save -o runtimetest-archive.tar test/runtimetest
+$ oci-runtime-tool validate runtimetest-archive.tar
+$ $HOME/work/src/github.com/opencontainers/image-tools/oci-image-validate runtimetest-archive.tar
+```
+
+And run the conformance suite: 
+```
+$ docker run -it --hostname mrsdalloway test/runtimetest
 ```
 
 This process has been encapsulated into a `test_docker.sh` shell script. 
@@ -178,6 +209,77 @@ drwxr-xr-x 0/0               0 2017-01-17 23:30 f5350bc7471f707cce96059017355178
 
 As the vagrant machine build out included `jq`, it is easy to inspect the various json files. 
 
+## Running the OCI Runtime Conformance Suite with rkt
 
+To run the OCI conformance runtime suite with `rkt` requires a similar process to `Docker`. 
+Essentially we need to move the conformance test executable and its supporting container bundle into a rkt pod, 
+then run the pod. 
+To build the pod, the acbuild tool is required. 
+
+Create a workspace and copy the conformance test environment into it:
+```
+$ mkdir test_rkt
+$ cd test_rkt
+$ cp $HOME/work/src/github.com/opencontainers/runtime-tools/runtimetest .
+$ cp $HOME/work/src/github.com/opencontainers/runtime-tools/rootfs.tar.gz .
+$ oci-runtime-tool generate --output config.json --args '/runtimetest' --args '--log-level=debug'  --rootfs-path '.'
+```
+
+We can create a script for `acbuild` to execute to create the pod definition for the container.
+As with creating the Dockerfile (above), we start with the base root filesystem, add the conformance test executable,
+and bundle config.json, and set the entry point.
+> N.B. For now, because of a lack of experience with rkt, 
+> the experiment doesn't create a base layer for the root filesystem. 
+> If there is a better way to unpack the tar
+> archive and load the rootfs into the pod image, please file an issue. 
+```
+$ cat >rktfile <<-EOF
+begin
+set-name test/rkt
+copy runtimetest /runtimetest
+copy config.json /config.json
+set-exec /runtimetest
+write test-rkt.aci
+end
+EOF
+```
+
+Build the rkt pod.
+```
+$ acbuild script rktfile
+Beginning build with an empty ACI
+Setting name of ACI to test/rkt
+Adding dependency "quay.io/coreos/busybox"
+Copying host:runtimetest to aci:/runtimetest
+Copying host:config.json to aci:/config.json
+Setting exec command [/runtimetest]
+Writing ACI to test-rkt.aci
+Ending the build
+script: no build in progress in this working dir - try "acbuild begin"
+```
+
+At this point we can run the aci file. 
+```
+$ rkt run --insecure-options=image test-rkt.aci
+image: using image from file /home/ubuntu/rkt-v1.0.0/stage1-coreos.aci
+image: using image from file test-rkt.aci
+run: group "rkt" not found, will use default gid when rendering images
+networking: loading networks from /etc/rkt/net.d
+networking: loading network default with type ptp
+stage1: warning: error setting journal ACLs, you'll need root to read the pod journal: group "rkt" not found
+[61126.742852] runtimetest[4]: TAP version 13
+[61126.743101] runtimetest[4]: ok 1 - root filesystem
+...
+```
+We can see the pod and images created:
+```
+$ rkt list
+UUID		APP	IMAGE NAME	STATE	CREATED		STARTED		NETWORKS
+5cdc19cd	rkt	test/rkt	exited	5 seconds ago	5 seconds ago
+$ rkt image list 
+ID			NAME					IMPORT TIME	LAST USED	SIZE	LATEST
+sha512-2e6e6329a5e4	coreos.com/rkt/stage1-coreos:1.0.0	11 seconds ago	11 seconds ago	73MiB	false
+sha512-e49fd669407f	test/rkt				11 seconds ago	11 seconds ago	9.2MiB	false
+```
 
 
