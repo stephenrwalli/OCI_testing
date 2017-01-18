@@ -210,11 +210,17 @@ drwxr-xr-x 0/0               0 2017-01-17 23:30 f5350bc7471f707cce96059017355178
 As the vagrant machine build out included `jq`, it is easy to inspect the various json files. 
 
 ## Running the OCI Runtime Conformance Suite with rkt
+> N.B. This is still and active experiment. It has only been tested on the Ubuntu build so far. 
+> Installing rkt/acbuild is still done by hand, and not as part of the Vagrant machine startup. 
+
+First Install rkt/acbuild
+```
+```
 
 To run the OCI conformance runtime suite with `rkt` requires a similar process to `Docker`. 
-Essentially we need to move the conformance test executable and its supporting container bundle into a rkt pod, 
-then run the pod. 
-To build the pod, the acbuild tool is required. 
+Essentially we need to move the conformance test executable and its supporting container bundle into a rkt image, 
+then run the image. 
+To build the image, the acbuild tool is required. 
 
 Create a workspace and copy the conformance test environment into it:
 ```
@@ -226,12 +232,13 @@ $ oci-runtime-tool generate --output config.json --args '/runtimetest' --args '-
 ```
 
 We can create a script for `acbuild` to execute to create the pod definition for the container.
-As with creating the Dockerfile (above), we start with the base root filesystem, add the conformance test executable,
+As with creating the Dockerfile (above), we add the conformance test executable,
 and bundle config.json, and set the entry point.
-> N.B. For now, because of a lack of experience with rkt, 
+> N.B. For now, because of a lack of experience with `rkt`, 
 > the experiment doesn't create a base layer for the root filesystem. 
 > If there is a better way to unpack the tar
-> archive and load the rootfs into the pod image, please file an issue. 
+> archive and load the rootfs into the pod image, please file an issue/pull request. 
+
 ```
 $ cat >rktfile <<-EOF
 begin
@@ -244,7 +251,7 @@ end
 EOF
 ```
 
-Build the rkt pod.
+Build the rkt image.
 ```
 $ acbuild script rktfile
 Beginning build with an empty ACI
@@ -258,7 +265,7 @@ Ending the build
 script: no build in progress in this working dir - try "acbuild begin"
 ```
 
-At this point we can run the aci file. 
+At this point we can run the rkt image. 
 ```
 $ rkt run --insecure-options=image test-rkt.aci
 image: using image from file /home/ubuntu/rkt-v1.0.0/stage1-coreos.aci
@@ -271,6 +278,7 @@ stage1: warning: error setting journal ACLs, you'll need root to read the pod jo
 [61126.743101] runtimetest[4]: ok 1 - root filesystem
 ...
 ```
+
 We can see the pod and images created:
 ```
 $ rkt list
