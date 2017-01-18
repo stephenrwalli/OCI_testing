@@ -112,6 +112,13 @@ one needs to take the same approach of building a container bundle around the co
 manipulating it into the container runtime expected packaging, 
 then invoking the container runtime.  
 
+> N.B. These experiments have been around the investigating and testing 
+> the conformance suite itself and in NO WAY should be used as an indicator of 
+> conformance for real products (e.g. Docker, rkt). These experiments are done 
+> using "current" software from multiple archives and in no way represent 
+> products to be certified. Such certification work will rightly come out of 
+> [Open Container Initiative Certification Working Group](https://github.com/opencontainers/certification). 
+
 ## Running the OCI Runtime Conformance Suite with Docker
 Running the OCI runtime conformance suite with Docker means:
 * Create a working directory, then using the OCI runtime tools,  
@@ -145,8 +152,8 @@ $ ./test_docker.sh
 $
 ```
 
-After a running the script, there's a directory that contains the Docker container build out, 
-as well as the saved and validated image. 
+After running the script, there's a directory (`test_docker`) that contains the Docker container build out,  
+as well as the saved and validated image (`runtimetest-archive.tar`). 
 Dumping the archive of the validated image shows the layers that were built up as `docker build` worked through the `Dockerfile`. 
 ```
 $ ls test_docker
