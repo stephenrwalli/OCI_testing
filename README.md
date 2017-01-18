@@ -210,7 +210,7 @@ drwxr-xr-x 0/0               0 2017-01-17 23:30 f5350bc7471f707cce96059017355178
 As the vagrant machine build out included `jq`, it is easy to inspect the various json files. 
 
 ## Running the OCI Runtime Conformance Suite with rkt
-> N.B. This is still and active experiment. It has only been tested on the Ubuntu build so far. 
+> N.B. This is still an active experiment. It has only been tested on the Ubuntu build so far. 
 > Installing rkt/acbuild is still done by hand, and not as part of the Vagrant machine startup. 
 
 First Install [rkt](https://coreos.com/blog/getting-started-with-rkt-1-0.html) and [acbuild](https://github.com/containers/build). 
@@ -258,7 +258,6 @@ copy runtimetest /runtimetest
 copy config.json /config.json
 set-exec /runtimetest
 write test-rkt.aci
-end
 EOF
 ```
 
@@ -267,13 +266,10 @@ Build the rkt image.
 $ acbuild script rktfile
 Beginning build with an empty ACI
 Setting name of ACI to test/rkt
-Adding dependency "quay.io/coreos/busybox"
 Copying host:runtimetest to aci:/runtimetest
 Copying host:config.json to aci:/config.json
 Setting exec command [/runtimetest]
 Writing ACI to test-rkt.aci
-Ending the build
-script: no build in progress in this working dir - try "acbuild begin"
 ```
 
 At this point we can run the rkt image. 
