@@ -213,8 +213,19 @@ As the vagrant machine build out included `jq`, it is easy to inspect the variou
 > N.B. This is still and active experiment. It has only been tested on the Ubuntu build so far. 
 > Installing rkt/acbuild is still done by hand, and not as part of the Vagrant machine startup. 
 
-First Install rkt/acbuild
+First Install [rkt](https://coreos.com/blog/getting-started-with-rkt-1-0.html) and [acbuild](https://github.com/containers/build). 
 ```
+$ wget https://github.com/coreos/rkt/releases/download/v1.0.0/rkt-v1.0.0.tar.gz
+$ tar xfv rkt-v1.0.0.tar.gz
+$ alias rkt="sudo '${PWD}/rkt-v1.0.0/rkt'"
+$ echo 'alias rkt="sudo '${PWD}/rkt-v1.0.0/rkt'"' >> .profile 
+$ cd ~
+$ git clone https://github.com/containers/build acbuild
+$ cd acbuild
+$ ./build
+$ echo 'export ACBUILD_BIN_DIR=~/acbuild/bin' >> .profile
+$ echo 'export PATH=$PATH:$ACBUILD_BIN_DIR' >> .profile
+$ source .profile
 ```
 
 To run the OCI conformance runtime suite with `rkt` requires a similar process to `Docker`. 
@@ -289,5 +300,7 @@ ID			NAME					IMPORT TIME	LAST USED	SIZE	LATEST
 sha512-2e6e6329a5e4	coreos.com/rkt/stage1-coreos:1.0.0	11 seconds ago	11 seconds ago	73MiB	false
 sha512-e49fd669407f	test/rkt				11 seconds ago	11 seconds ago	9.2MiB	false
 ```
+
+Cleaning up images and pods is done with `rkt image rm` and `rkt rm`. 
 
 
