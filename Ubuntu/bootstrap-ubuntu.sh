@@ -21,7 +21,10 @@ mkdir -p /home/ubuntu/work
 echo 'export GOPATH=/home/ubuntu/work' >> /home/ubuntu/.bashrc
 echo 'export PATH=$PATH:/usr/local/go/bin' >> /home/ubuntu/.bashrc
 echo 'set -o vi' >> /home/ubuntu/.bashrc
-source /home/ubuntu/.bashrc
+echo 'export GOPATH=/home/ubuntu/work' >> /home/ubuntu/.profile
+echo 'export PATH=$PATH:/usr/local/go/bin' >> /home/ubuntu/.profile 
+echo 'set -o vi' >> /home/ubuntu/.profile
+source /home/ubuntu/.profile
 
 # Add seccomp 
 sudo apt-get -y install libseccomp-dev
@@ -42,7 +45,7 @@ sudo make install
 cd /home/ubuntu/work/src/github.com/opencontainers
 git clone https://github.com/opencontainers/runtime-tools
 cd runtime-tools
-make
+make 
 # N.B. It is unclear what part Godeps presently plays. Because
 # if I'm reading Godep.json correctly, it was last run a while ago. 
 # Add man dependencies ... 

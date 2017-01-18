@@ -72,7 +72,6 @@ sudo dnf -y install docker-engine
 sudo systemctl enable docker.service
 sudo systemctl start docker
 
-sudo groupadd docker
 sudo usermod -aG docker vagrant
 
 sudo systemctl enable docker
@@ -81,6 +80,6 @@ sudo systemctl enable docker
 
 #
 # Fix ownership of bootstrapped files to vagrant user
-sudo chown -R vagrant work
-sudo chgrp -R vagrant work
+sudo chown -R vagrant /home/vagrant/work
+sudo chgrp -R vagrant /home/vagrant/work
 
