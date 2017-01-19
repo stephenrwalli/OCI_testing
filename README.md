@@ -26,7 +26,8 @@ The OCI Tools are also pulled onto the machine with `bootstrap-[platform].sh`
 * runtime-tools (These tools have further github dependencies for go.) 
 * image-tools
 
-Docker is installed such that the conformance suite can be run on Docker. 
+Docker is installed ([Ubuntu](https://docs.docker.com/engine/installation/linux/ubuntulinux/), 
+[Fedora](https://docs.docker.com/engine/installation/linux/fedora/)) such that the conformance suite can be run on Docker. 
 The plan will be to get `rkt` running next. 
 
 The last thing the `bootstrap-[platform].sh` script does is to force a platform reasonable user and group on the OCI installed tools tree. 
@@ -212,8 +213,9 @@ drwxr-xr-x 0/0               0 2017-01-17 23:30 f5350bc7471f707cce96059017355178
 As the vagrant machine build out included `jq`, it is easy to inspect the various json files. 
 
 ## Running the OCI Runtime Conformance Suite with rkt
-> N.B. This is still an active experiment. It has only been tested on the Ubuntu build so far. 
-> Installing rkt/acbuild is still done by hand, and not as part of the Vagrant machine startup. 
+> N.B. This is still an active experiment. While it has been tested on the Ubuntu and Fedora
+> builds, it had not yet been turned into a script. Installing rkt/acbuild is still done
+> by hand, and not as part of the Vagrant machine bootstrap. 
 
 First Install [rkt](https://coreos.com/blog/getting-started-with-rkt-1-0.html) and [acbuild](https://github.com/containers/build). 
 ```
