@@ -15,14 +15,20 @@ sudo apt-get -y install jq
 # Install git
 sudo apt-get -y install git
 
-# Install go (Current stable as of this writing is 1.7.4)
+# Install go (Current stable is 1.8.x, but xenial seems to be stuck on 1.6.2)
+# So I apt-get install, but then manually update. I appreciate this is probably too much.
 sudo apt-get -y install golang-go
+wget https://storage.googleapis.com/golang/go1.8.3.linux-amd64.tar.gz
+sudo tar -xvf go1.8.3.linux-amd64.tar.gz
+sudo mv go /usr/local
 mkdir -p /home/ubuntu/work
+echo 'export GOROOT=/usr/local/go' >> /home/ubuntu/.bashrc
 echo 'export GOPATH=/home/ubuntu/work' >> /home/ubuntu/.bashrc
-echo 'export PATH=$PATH:/usr/local/go/bin' >> /home/ubuntu/.bashrc
+echo 'export PATH=$GOPATH/bin:$GOROOT/bin:$PATH' >> /home/ubuntu/.bashrc
 echo 'set -o vi' >> /home/ubuntu/.bashrc
+echo 'export GOROOT=/usr/local/go' >> /home/ubuntu/.bashrc
 echo 'export GOPATH=/home/ubuntu/work' >> /home/ubuntu/.profile
-echo 'export PATH=$PATH:/usr/local/go/bin' >> /home/ubuntu/.profile 
+echo 'export PATH=$GOPATH/bin:$GOROOT/bin:$PATH' >> /home/ubuntu/.profile 
 echo 'set -o vi' >> /home/ubuntu/.profile
 source /home/ubuntu/.profile
 
@@ -57,8 +63,10 @@ sudo make install
 # Add image-tools
 cd /home/ubuntu/work/src/github.com/opencontainers
 git clone https://github.com/opencontainers/image-tools.git
-cd image-tools
-make tools
+go get -d github.com/opencontainers/image-tools/cmd/oci-image-tool
+cd $GOPATH/src/github.com/opencontainers/image-tools/
+make all
+sudo make install
 
 # Adding Docker
 sudo apt-get -y install apt-transport-https ca-certificates
